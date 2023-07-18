@@ -5,6 +5,7 @@ from time import sleep
 import configargparse
 from github3 import login
 from github3.exceptions import NotFoundError, GitHubException
+import os
 
 
 def toggle_enforce_admin(options):
@@ -22,7 +23,9 @@ def toggle_enforce_admin(options):
     protection = get_protection(access_token, branch_name, owner, repo_name)
     print(f"Enforce admins branch protection enabled? {protection.enforce_admins.enabled}")
     # save the current status for use later on if desired
-    print(f"\"name=initial_status::{protection.enforce_admins.enabled}\" >> $GITHUB_OUTPUT")
+    print(f"GITHUB_OUTPUT{os.environ['GITHUB_OUTPUT']}")
+    os.environ["GITHUB_OUTPUT"] = "name=initial_status::{protection.enforce_admins.enabled}"
+    print(f"GITHUB_OUTPUT{os.environ['GITHUB_OUTPUT']}")
     print(f"Setting enforce admins branch protection to {enforce_admins if enforce_admins is not None else not protection.enforce_admins.enabled}")
     for i in range(retries):
         try:
